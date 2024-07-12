@@ -3,7 +3,8 @@
 
 <h4>Getting Started</h4>
 <h4>Cloning the Repository</h4>
-<span>clone the repository to your local machine. Open your terminal and run the following command<span>
+<span>clone the repository to your local machine. Open your terminal and run the following command</span>
+
 ```bash
 git clone https://github.com/Amman30/football_analytics.git
 ```
