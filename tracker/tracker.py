@@ -25,6 +25,7 @@ class Tracker:
                         position = get_foot_position(bbox)
                     tracks[object][frame_num][track_id]['position'] = position
 
+        #ball interpolation function
     def interpolate_ball_positions(self,ball_positions):
         ball_positions = [x.get(1,{}).get('bbox',[]) for x in ball_positions]
         df_ball_positions = pd.DataFrame(ball_positions,columns=['x1','y1','x2','y2'])
@@ -165,13 +166,14 @@ class Tracker:
         return frame
 
     def draw_team_ball_control(self,frame,frame_num,team_ball_control):
-        # Draw a semi-transparent rectaggle 
+        # Draw a semi-transparent rectangle 
         overlay = frame.copy()
         cv2.rectangle(overlay, (1350, 850), (1900,970), (255,255,255), -1 )
         alpha = 0.4
         cv2.addWeighted(overlay, alpha, frame, 1 - alpha, 0, frame)
 
-        team_ball_control_till_frame = team_ball_control[:frame_num+1]
+        team_ball_control_till_frame = team_ball_control[:frame_num+1] #percentage f time the team has the ball
+        
         # Get the number of time each team had ball control
         team_1_num_frames = team_ball_control_till_frame[team_ball_control_till_frame==1].shape[0]
         team_2_num_frames = team_ball_control_till_frame[team_ball_control_till_frame==2].shape[0]
@@ -210,7 +212,7 @@ class Tracker:
 
 
             # Draw Team Ball Control
-            #frame = self.draw_team_ball_control(frame, frame_num, team_ball_control)
+            frame = self.draw_team_ball_control(frame, frame_num, team_ball_control)
 
             output_video_frames.append(frame)
 
