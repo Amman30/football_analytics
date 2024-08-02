@@ -79,7 +79,7 @@ def main():
         nearest_player_id = tracker.find_nearest_player_to_goalkeeper(tracks, frame_num)
         if nearest_player_id is not None:
             nearest_player_position = tracks['players'][frame_num][nearest_player_id]['position']
-            tracker.draw_offside_line(frame, nearest_player_position)
+            tracker.draw_offside_box(frame, nearest_player_position)
 
     # Draw output 
     ## Draw object Tracks
