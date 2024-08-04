@@ -7,6 +7,40 @@ from player_ball_assigner import PlayerBallAssigner
 from camera_movement_estimator import CameraMovementEstimator
 from view_transformer import ViewTransformer
 from speed_and_distance_estimator import SpeedAndDistance_Estimator
+from mplsoccer import Pitch
+import matplotlib.pyplot as plt
+from io import BytesIO
+from team_assigner import TeamAssigner
+
+def plot_positions_on_pitch(player_positions):
+    # Create pitch with explicit dimensions
+    pitch=Pitch(pitch_type='statsbomb',pitch_color='#22312b',line_color='#c7d5cc',pitch_length=120,pitch_width=120,axis=True, label=True, tick=True)
+    fig,ax=pitch.draw(figsize=(15, 15))
+    fig.set_facecolor('#22312b')
+    ax.patch.set_facecolor('#22312b')
+
+    scaling_factor_x = 120 / 2000
+    scaling_factor_y = 120 / 3000
+
+    for player_id, (x, y) in player_positions.items():
+         
+        ax.scatter(int(x*scaling_factor_x), int(y*scaling_factor_y), c='#ea6969') 
+    
+    # Save the plot to a BytesIO object and convert it to an OpenCV image
+    buf = BytesIO()
+    plt.savefig(buf, format='png', bbox_inches='tight', pad_inches=0)
+    buf.seek(0)
+    img = np.frombuffer(buf.getvalue(), dtype=np.uint8)
+    img = cv2.imdecode(img, cv2.IMREAD_UNCHANGED)
+    buf.close()
+
+    plt.close(fig)
+
+    # Convert the image to RGB (if it's in RGBA format)
+    if img.shape[2] == 4:  # Check if the image has an alpha channel
+        img = cv2.cvtColor(img, cv2.COLOR_BGRA2BGR)
+
+    return img
 
 
 def main():
@@ -74,6 +108,14 @@ def main():
             team_ball_control.append(team_ball_control[-1])
     team_ball_control = np.array(team_ball_control)
 
+    # Draw the tracking plot map on each frame
+    output_video_frames = []
+    tracking_video_frames=[]
+    for frame_num, frame in enumerate(video_frames):
+        player_positions = {player_id: track['position'] for player_id, track in tracks['players'][frame_num].items()}
+        pitch_frame = plot_positions_on_pitch(player_positions)
+        tracking_video_frames.append(pitch_frame)
+
     # Find and draw the offside line
     for frame_num, frame in enumerate(video_frames):
         nearest_player_id = tracker.find_nearest_player_to_goalkeeper(tracks, frame_num)
@@ -83,16 +125,17 @@ def main():
 
     # Draw output 
     ## Draw object Tracks
-    output_video_frames = tracker.draw_annotations(video_frames, tracks, team_ball_control)
+   # output_video_frames = tracker.draw_annotations(output_video_frames, tracks, team_ball_control)
 
     ## Draw Camera movement
-    output_video_frames = camera_movement_estimator.draw_camera_movement(output_video_frames, camera_movement_per_frame)
+   # output_video_frames = camera_movement_estimator.draw_camera_movement(output_video_frames, camera_movement_per_frame)
 
     ## Draw Speed and Distance
-    speed_and_distance_estimator.draw_speed_and_distance(output_video_frames, tracks)
+    #speed_and_distance_estimator.draw_speed_and_distance(output_video_frames, tracks)
 
     # Save video
-    save_video(output_video_frames, 'output_videos/output_video.avi')
+   # save_video(output_video_frames, 'output_videos/output_video_with_tracking.avi')
+    save_video(tracking_video_frames, 'output_videos/output_video_with_tracking.avi')
 
 if __name__ == '__main__':
     main()
