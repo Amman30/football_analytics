@@ -16,6 +16,9 @@ git clone https://github.com/Amman30/football_analytics.git
 <li>last.pt: The latest version of the trained model.</li>
 <li>input_video: This directory contains a sample video used for testing the model.
 </ul>
+<h4>Results</h4>
+<img width="1373" alt="Screenshot 2024-08-04 at 6 49 52 PM" src="https://github.com/user-attachments/assets/24279ba5-dd4d-43da-a1c0-c56dba606754">
+<img width="1373" alt="Screenshot 2024-08-04 at 6 50 13 PM" src="https://github.com/user-attachments/assets/cc67345d-9846-4465-bc7f-4a18a13417d5">
 
 <h4>To use the model</h4>
 <span>To use the model, place your input videos in the input_video directory. After running the model, the predicted videos will be available in the runs/detect/predict directory.</span>
