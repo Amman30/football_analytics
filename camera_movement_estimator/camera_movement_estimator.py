@@ -5,7 +5,7 @@ import os
 import sys 
 sys.path.append('../')
 from utils import measure_distance,measure_xy_distance
-
+// camera movement estimatro
 class CameraMovementEstimator():
     def __init__(self,frame):
         self.minimum_distance = 5
